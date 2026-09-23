@@ -1,0 +1,33 @@
+name: Port — Create New Service
+
+on:
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: "Name of the new service/repository"
+        required: true
+      team:
+        description: "Owning team"
+        required: false
+        default: ""
+      description:
+        description: "Service description"
+        required: false
+        default: ""
+
+jobs:
+  create-service:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub repository
+        env:
+          GH_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+        run: |
+          gh repo create flowetst/${{ github.event.inputs.service_name }} \
+            --private \
+            --description "${{ github.event.inputs.description }}" \
+            --add-readme
+        
+      - name: Output result
+        run: |
+          echo "Repository created: https://github.com/flowetst/${{ github.event.inputs.service_name }}"
